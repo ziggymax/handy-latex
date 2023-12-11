@@ -1,5 +1,4 @@
 FROM alpine:latest
-ARG TEXSCHEME=full
 
 #=============================================================================
 # Part 1 - create files
@@ -29,7 +28,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 EOF
 
 COPY <<EOF /texlive.profile
@@ -48,7 +46,7 @@ instopt_adjustpath 0
 instopt_adjustrepo 1
 instopt_letter 0
 instopt_portable 0
-instopt_write18_restricted 0
+instopt_write18_restricted 1
 tlpdbopt_autobackup 0
 tlpdbopt_create_formats 1
 tlpdbopt_generate_updmap 0
@@ -58,7 +56,6 @@ tlpdbopt_post_code 1
 tlpdbopt_sys_bin /usr/local/bin
 tlpdbopt_sys_info /usr/local/share/info
 tlpdbopt_sys_man /usr/local/share/man
-
 EOF
 
 COPY <<EOF /texlive_pgp_keys.asc
@@ -146,7 +143,6 @@ vuypbl21ijFAc9f9re0PoWb4HhC/CzwrQEz4Zwhf1GA5PA/55skwstcY3mQQ0URx
 i0qNse4DKMoBZ8s=
 =epbb
 -----END PGP PUBLIC KEY BLOCK-----
-
 EOF
 
 #=============================================================================
@@ -196,22 +192,10 @@ RUN sha512sum -c ./install-tl-unx.tar.gz.sha512
 RUN mkdir -p /tmp/install-tl/installer
 RUN tar --strip-components 1 -zxf /tmp/install-tl/install-tl-unx.tar.gz -C /tmp/install-tl/installer
 # Run the TeX Live installer. It's a lot to download and sometimes there's a network hiccup
-# during installation, so we'll try up to 3 times to fetch and install the whole shebang
-RUN /tmp/install-tl/installer/install-tl -scheme "scheme-${TEXSCHEME}" -profile=/texlive.profile || \
-    /tmp/install-tl/installer/install-tl -scheme "scheme-${TEXSCHEME}" -profile=/texlive.profile || \
-    /tmp/install-tl/installer/install-tl -scheme "scheme-${TEXSCHEME}" -profile=/texlive.profile
-
-# Install additional packages for non full scheme
-RUN if [ "${TEXSCHEME}" != "full" ]; then \
-    tlmgr install \
-    collection-fontsrecommended \
-    collection-fontutils \
-    biber \
-    biblatex \
-    latexmk \
-    texliveonfly \
-    xindy \
-    ;fi
+# during installation, so we'll try up to 3 times to fetch and install the whole shebang.
+RUN /tmp/install-tl/installer/install-tl -scheme "scheme-full" -profile=/texlive.profile || \
+    /tmp/install-tl/installer/install-tl -scheme "scheme-full" -profile=/texlive.profile || \
+    /tmp/install-tl/installer/install-tl -scheme "scheme-full" -profile=/texlive.profile
 
 # https://github.com/xu-cheng/latex-action/issues/32#issuecomment-626086551
 RUN ln -sf /opt/texlive/texdir/texmf-dist/scripts/xindy/xindy.pl /opt/texlive/texdir/bin/x86_64-linuxmusl/xindy
@@ -231,8 +215,8 @@ RUN fc-cache -fv
 # Part 4 - cleanup to make image smaller
 #=============================================================================
 
-WORKDIR /
 RUN echo "==> Clean up"
+WORKDIR /
 RUN rm -rf \
     /opt/texlive/texdir/install-tl \
     /opt/texlive/texdir/install-tl.log \
