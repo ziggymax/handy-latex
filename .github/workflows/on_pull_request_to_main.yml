@@ -1,0 +1,21 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+    - name: Check license file
+      run: |
+        python3 .github/scripts/getlicense.py  Dockerfile "COPY <<EOF /LICENSE" "EOF" > license.txt; \
+        cmp LICENSE license.txt
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag handy-latex:$(date +%s)
