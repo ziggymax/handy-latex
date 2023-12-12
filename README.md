@@ -5,6 +5,17 @@ It is a fork of Cheng Xu's excellent project [latex-docker](https://github.com/x
 
 But I needed support for SVG graphics, and added that to the stuff already in [latex-docker](https://github.com/xu-cheng/latex-docker) (basically by simply including the Inkscape system package). Since containers should be ephemeral in general, I don't think adding extra TeX Live packages inside a container is a good idea. In addition to that, (re)building the container image just to add extra packages is cumbersome at best, so I chose to always build an image with the full TeX Live scheme, to reduce the need to add TeX Live packages. In the process of making those changes I also wanted to make the Dockerfile self-contained, rather than depend on external files.
 
+## Pulling the image
+To get a specific version use
+```
+docker pull ghcr.io/ziggymax/handy-latex-img:v1.0.0
+```
+or use
+```
+docker pull ghcr.io/ziggymax/handy-latex-img:latest
+```
+to get the latest/newest/greatest version.
+
 ## Using the image
 You can of course use/abuse the contents of this repository and the associated container image as you want, subject to the terms of the license (MIT). The image produced by the Dockerfile provides a good all-round LaTeX environment. But the intention is to use the image together with:
 
