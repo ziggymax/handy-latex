@@ -4,7 +4,8 @@ LABEL \
     org.opencontainers.image.title="General Docker Image with LaTeX/TexLive" \
     org.opencontainers.image.authors="Steen Krøyer <siggy.power@gmail.com>" \
     org.opencontainers.image.source="https://github.com/ziggymax/handy-latex-img" \
-    org.opencontainers.image.licenses="MIT"
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.description="A container image with a general and complete LaTeX/TeX Live environment"
 
 #=============================================================================
 # Part 1 - create files
